@@ -1,0 +1,44 @@
+---
+# --- Mise à l'échelle automatique du back selon le CPU (nécessite metrics-server) ---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: back-hpa
+  namespace: ia-sante
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: back-deployment
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60 # 60 % des 100m demandés
+---
+# --- Budgets de perturbation : une maintenance de nœud ne coupe jamais tout le service ---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: back-pdb
+  namespace: ia-sante
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      component: back
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: front-pdb
+  namespace: ia-sante
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      component: front

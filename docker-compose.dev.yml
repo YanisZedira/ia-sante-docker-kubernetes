@@ -1,0 +1,29 @@
+# Surcouche de développement (rechargement à chaud) :
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+# Le code est monté dans les conteneurs : chaque modification est prise en compte sans rebuild.
+
+services:
+  back:
+    build:
+      target: dev
+    image: ia-sante-back:dev
+    read_only: false
+    volumes:
+      - ./back/app:/app/app
+
+  front:
+    build:
+      target: dev
+    image: ia-sante-front:dev
+    read_only: false
+    tmpfs: []
+    environment:
+      API_PROXY_TARGET: http://back:4000 # le serveur Vite relaie /api vers le back
+    ports: !override
+      - "${FRONT_BIND:-127.0.0.1}:${FRONT_PORT:-5181}:5181"
+    volumes:
+      - ./front/src:/app/src
+      - ./front/index.html:/app/index.html
+      - ./front/cancer-du-sein:/app/cancer-du-sein
+    healthcheck:
+      disable: true

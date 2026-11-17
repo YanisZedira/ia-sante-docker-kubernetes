@@ -1,0 +1,103 @@
+Exécuté le 2026-11-17T20:03:14Z sur kind v0.33.0, Kubernetes v1.37.0
+$ ./scripts/verifier-k8s.sh http://127.0.0.1:8830
+
+=== 1. Objets du namespace ia-sante
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                                     SELECTOR
+deployment.apps/back-deployment    3/3     3            3           48m   api          ghcr.io/yaniszedira/ia-sante-back:1.0.0    component=back
+deployment.apps/front-deployment   2/2     2            2           48m   web          ghcr.io/yaniszedira/ia-sante-front:1.0.0   component=front
+
+NAME                                    READY   AGE   CONTAINERS   IMAGES
+statefulset.apps/postgres-statefulset   1/1     48m   postgres     postgres:17-alpine
+
+NAME                                    READY   STATUS    RESTARTS   AGE   IP            NODE                     NOMINATED NODE   READINESS GATES
+pod/back-deployment-7fbdb96667-c6c72    1/1     Running   0          87s   10.244.0.42   ia-sante-control-plane   <none>           <none>
+pod/back-deployment-7fbdb96667-d7f8f    1/1     Running   0          63s   10.244.0.45   ia-sante-control-plane   <none>           <none>
+pod/back-deployment-7fbdb96667-gdm6g    1/1     Running   0          40s   10.244.0.46   ia-sante-control-plane   <none>           <none>
+pod/front-deployment-6496947474-4hwtm   1/1     Running   0          87s   10.244.0.43   ia-sante-control-plane   <none>           <none>
+pod/front-deployment-6496947474-lfg6m   1/1     Running   0          79s   10.244.0.44   ia-sante-control-plane   <none>           <none>
+pod/postgres-statefulset-0              1/1     Running   0          39m   10.244.0.25   ia-sante-control-plane   <none>           <none>
+
+NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+service/back-service       ClusterIP   10.96.16.184   <none>        4000/TCP         48m   component=back
+service/front-service      NodePort    10.96.53.184   <none>        8080:30080/TCP   48m   component=front
+service/postgres-service   ClusterIP   None           <none>        5432/TCP         48m   component=postgres
+
+NAME                                 STATUS   VOLUME                 CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+persistentvolumeclaim/postgres-pvc   Bound    ia-sante-postgres-pv   1Gi        RWO            manual         <unset>                 48m   Filesystem
+
+NAME                                           REFERENCE                    TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/back-hpa   Deployment/back-deployment   cpu: 17%/60%   2         6         3          48m
+
+NAME                                                                POD-SELECTOR         AGE
+networkpolicy.networking.k8s.io/allow-back-from-front-and-gateway   component=back       48m
+networkpolicy.networking.k8s.io/allow-front-from-anywhere           component=front      48m
+networkpolicy.networking.k8s.io/allow-postgres-from-back            component=postgres   48m
+networkpolicy.networking.k8s.io/default-deny-ingress                <none>               48m
+NAME                   CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+ia-sante-postgres-pv   1Gi        RWO            Retain           Bound    ia-sante/postgres-pvc   manual         <unset>                          48m
+
+=== 2. L'application répond
+  OK  /healthz -> 200
+  OK  /ia-sante/ -> 200
+  OK  /ia-sante/cancer-du-sein/ -> 200
+  OK  /ia-sante/model/mammo.onnx -> 200
+  OK  /ia-sante/model/pcam.onnx -> 200
+  OK  /api/health -> 200
+  OK  /api/ready -> 200
+  OK  /api/models -> 200
+  OK  /api/cases -> 200
+  OK  /api/sources -> 200
+  OK  /api/stats -> 200
+  OK  ort-wasm-simd-threaded.mjs -> text/javascript
+
+=== 3. Répartition de charge entre les réplicas du back
+      5 back-deployment-7fbdb96667-c6c72
+      1 back-deployment-7fbdb96667-d7f8f
+      6 back-deployment-7fbdb96667-gdm6g
+
+=== 4. Cloisonnement réseau (NetworkPolicy)
+  OK  le front ne peut pas joindre PostgreSQL
+  OK  le back joint PostgreSQL
+
+=== 5. Persistance : les données survivent à la suppression du pod PostgreSQL
+pod "postgres-statefulset-0" deleted from ia-sante namespace
+pod/postgres-statefulset-0 condition met
+pod/back-deployment-7fbdb96667-c6c72 condition met
+pod/back-deployment-7fbdb96667-d7f8f condition met
+pod/back-deployment-7fbdb96667-gdm6g condition met
+  OK  total des analyses avant = 2544, après = 2544
+
+=== 6. Auto-réparation : un pod back supprimé est recréé
+pod "back-deployment-7fbdb96667-c6c72" deleted from ia-sante namespace
+  OK  le service répond pendant la suppression (200)
+Waiting for deployment "back-deployment" rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for deployment "back-deployment" rollout to finish: 2 of 3 updated replicas are available...
+Waiting for deployment "back-deployment" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "back-deployment" rollout to finish: 2 of 3 updated replicas are available...
+Waiting for deployment "back-deployment" rollout to finish: 2 of 3 updated replicas are available...
+deployment "back-deployment" successfully rolled out
+NAME                               READY   STATUS    RESTARTS   AGE
+back-deployment-7fbdb96667-d7f8f   1/1     Running   0          115s
+back-deployment-7fbdb96667-gdm6g   1/1     Running   0          92s
+back-deployment-7fbdb96667-zk9fb   1/1     Running   0          23s
+
+=== 7. Mise à jour sans interruption (rolling update)
+deployment.apps/back-deployment restarted
+  OK  196 requêtes pendant la mise à jour, 0 erreur
+6         <none>
+7         <none>
+
+
+=== 8. Mise à l'échelle automatique (HPA)
+NAME       REFERENCE                    TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+back-hpa   Deployment/back-deployment   cpu: 29%/60%   2         6         3          50m
+NAME                                CPU(cores)   MEMORY(bytes)   
+back-deployment-65d4676894-db29k    229m         30Mi            
+back-deployment-65d4676894-mzscg    19m          64Mi            
+back-deployment-65d4676894-txbcf    24m          64Mi            
+back-deployment-7fbdb96667-d7f8f    40m          64Mi            
+front-deployment-6496947474-4hwtm   10m          13Mi            
+front-deployment-6496947474-lfg6m   2m           5Mi             
+postgres-statefulset-0              45m          36Mi            
+
+Toutes les vérifications sont passées.

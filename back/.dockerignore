@@ -1,0 +1,24 @@
+# Docker lui-même
+Dockerfile
+.dockerignore
+
+# Git et éditeurs
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets et fichiers locaux : jamais dans l'image
+.env
+.env.*
+*.log
+*.db
+*.sqlite3

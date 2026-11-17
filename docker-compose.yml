@@ -1,0 +1,79 @@
+# Environnement complet en une commande :  docker compose up -d --build
+# Trois services : front (nginx + plateforme), back (FastAPI), database (PostgreSQL).
+# Les secrets viennent du fichier .env (copie de .env.example, jamais versionné).
+
+name: ia-sante
+
+services:
+  database:
+    image: postgres:17-alpine # image officielle légère, version majeure figée
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-iasante}
+      POSTGRES_USER: ${POSTGRES_USER:-iasante}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copiez .env.example en .env et choisissez un mot de passe}
+    volumes:
+      - database:/var/lib/postgresql/data # volume nommé : les données survivent aux conteneurs
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 256M }
+
+  back:
+    build:
+      context: ./back
+      target: runtime
+    image: ${REGISTRY:-ghcr.io/yaniszedira}/ia-sante-back:${TAG:-latest}
+    restart: unless-stopped
+    environment:
+      PGHOST: database
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB:-iasante}
+      PGUSER: ${POSTGRES_USER:-iasante}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Copiez .env.example en .env}
+      ROOT_PATH: /api # l'API est publiée sous /api par le front : la doc Swagger reste sur /api/docs
+    depends_on:
+      database:
+        condition: service_healthy # attend que PostgreSQL accepte les connexions
+    networks: [frontend, backend]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 256M }
+
+  front:
+    build:
+      context: ./front
+      target: runtime
+    image: ${REGISTRY:-ghcr.io/yaniszedira}/ia-sante-front:${TAG:-latest}
+    restart: unless-stopped
+    environment:
+      BACK_URL: http://back:4000
+    ports:
+      - "${FRONT_BIND:-127.0.0.1}:${FRONT_PORT:-8080}:8080"
+    depends_on:
+      back:
+        condition: service_healthy # le HEALTHCHECK du Dockerfile back doit passer
+    networks: [frontend]
+    read_only: true
+    tmpfs: # écritures en mémoire seulement, appartenant à l'utilisateur nginx (uid 101)
+      - /tmp:uid=101,gid=101,mode=0755
+      - /etc/nginx/conf.d:uid=101,gid=101,mode=0755
+    security_opt: ["no-new-privileges:true"]
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 128M }
+
+networks:
+  frontend: {} # front <-> back
+  backend: {} # back <-> database : le front n'a aucun accès à la base
+
+volumes:
+  database: {}

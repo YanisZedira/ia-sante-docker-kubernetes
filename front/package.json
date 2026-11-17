@@ -1,0 +1,22 @@
+{
+  "name": "yz-ia-sante",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5181",
+    "build": "vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview --port 5182"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.18",
+    "onnxruntime-web": "^1.20.1",
+    "openseadragon": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/openseadragon": "^5.0.2",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  }
+}

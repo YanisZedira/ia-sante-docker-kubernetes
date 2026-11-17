@@ -1,0 +1,10 @@
+# Fins de ligne Unix partout : les scripts shell et les Dockerfiles doivent fonctionner sous Linux,
+# même si le dépôt est cloné sous Windows.
+* text=auto eol=lf
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.onnx binary
+*.wasm binary
+*.woff2 binary

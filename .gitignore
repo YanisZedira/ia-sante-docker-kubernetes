@@ -1,0 +1,23 @@
+# Secrets : jamais dans Git
+.env
+.env.*
+!.env.example
+deploy/secret.yaml
+*.pem
+*.key
+kubeconfig*
+
+# Dépendances et builds
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Divers
+*.log
+.DS_Store
+.idea/
+.vscode/

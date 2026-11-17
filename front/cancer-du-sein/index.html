@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cancer du sein et IA, expliqués simplement | YZ Automation</title>
+<meta name="description" content="Comprendre le cancer du sein, le dépistage et ce que l'IA change vraiment. Testez deux IA en direct sur de vraies mammographies et une vraie lame. Gratuit." />
+<link rel="canonical" href="https://yz-automation.fr/ia-sante/cancer-du-sein" />
+<meta name="theme-color" content="#f9f5f4" />
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:title" content="Le cancer du sein, expliqué. Et ce que l'IA y change vraiment." />
+<meta property="og:description" content="Comprendre, se faire dépister, et voir de vrais modèles d'IA lire de vraies images médicales. Gratuit, pédagogique, rien n'est envoyé." />
+<meta property="og:url" content="https://yz-automation.fr/ia-sante/cancer-du-sein" />
+<meta property="og:image" content="https://yz-automation.fr/ia-sante/og.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/data/img/ruban.webp" as="image" type="image/webp" fetchpriority="high" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"LearningResource","name":"Le cancer du sein, expliqué. Et ce que l'IA y change vraiment.","inLanguage":"fr","url":"https://yz-automation.fr/ia-sante/cancer-du-sein","educationalUse":"sensibilisation et démonstration interactive","learningResourceType":"interactive resource","isAccessibleForFree":true,"about":[{"@type":"MedicalCondition","name":"Cancer du sein"},{"@type":"Thing","name":"Intelligence artificielle en santé"}],"author":{"@type":"Person","name":"Yanis Zedira","url":"https://yz-automation.fr/a-propos"},"publisher":{"@type":"Organization","name":"YZ Automation","url":"https://yz-automation.fr"},"datePublished":"2026-11-17","license":"https://creativecommons.org/licenses/by/4.0/"},
+{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://yz-automation.fr/"},{"@type":"ListItem","position":2,"name":"IA et santé","item":"https://yz-automation.fr/ia-sante"},{"@type":"ListItem","position":3,"name":"Cancer du sein","item":"https://yz-automation.fr/ia-sante/cancer-du-sein"}]}
+]}
+</script>
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="nav" id="nav">
+  <a class="nav__logo" href="/" aria-label="YZ Automation, accueil"><img src="/logo.svg" alt="" width="35" height="22" /><span>IA et santé</span></a>
+  <nav aria-label="Navigation de la page" class="nav__links">
+    <a href="#comprendre">Comprendre</a>
+    <a href="#ia">Ce que fait l'IA</a>
+    <a href="#essayer">Essayer</a>
+    <a href="#france">En France</a>
+  </nav>
+  <a class="btn btn--rose btn--sm nav__cta" href="#essayer" data-track="essayer_nav"><span class="live-dot"></span>Essayer l'IA</a>
+</header>
+
+<a class="float-cta" id="float-cta" href="#essayer" data-track="essayer_flottant" tabindex="-1"><img src="/data/img/icon-ia.webp" alt="" width="36" height="36" /><span><b>Essayer l'IA en direct</b><small data-ai-status><span class="ai-status__t">Les 2 IA se chargent…</span></small></span></a>
+
+<p class="notice" role="note"><b>Page pédagogique.</b> Elle ne pose aucun diagnostic et ne remplace pas un médecin. Toutes les images médicales sont publiques et anonymes.</p>
+
+<main id="contenu">
+
+<!-- ================================================= OUVERTURE -->
+<section class="hero" aria-labelledby="h-hero">
+  <div class="hero__art" id="orb"><img src="/data/img/ruban.webp" alt="Un ruban rose, symbole de la lutte contre le cancer du sein, entouré d'un nuage de fines particules." width="1024" height="1024" fetchpriority="high" /></div>
+  <p class="ai-status" data-ai-status data-state="loading"><span class="live-dot"></span><span class="ai-status__t">Les 2 IA se chargent…</span></p>
+  <h1 id="h-hero" class="display" data-split>Le cancer du sein, expliqué. Et ce que l'IA y change vraiment.</h1>
+  <p class="lead">En dix minutes&nbsp;: comprendre la maladie, savoir pourquoi le dépistage sauve des vies, et voir de vrais modèles d'intelligence artificielle lire de vraies images médicales, sous vos yeux.</p>
+  <div class="hero__actions">
+    <a class="btn btn--rose btn--xl btn--glow" href="#essayer" data-track="essayer_hero"><span class="live-dot live-dot--w"></span>Essayer l'IA en direct</a>
+    <a class="btn btn--line btn--xl" href="#comprendre">Comprendre d'abord</a>
+  </div>
+  <div class="demos" aria-label="Les trois expériences avec l'IA">
+    <a class="demo" href="#essayer" data-track="demo_mammo"><img src="/data/img/icon-mammo.webp" alt="" width="96" height="96" /><span class="demo__live"><span class="live-dot"></span>En direct</span><b>Lire une mammographie</b><small>L'IA donne son avis sur une zone suspecte</small></a>
+    <a class="demo" href="#microscope" data-track="demo_lame"><img src="/data/img/icon-microscope.webp" alt="" width="96" height="96" /><span class="demo__live"><span class="live-dot"></span>En direct</span><b>Scanner une lame</b><small>Elle cherche des cellules cancéreuses</small></a>
+    <a class="demo" href="#a-vous" data-track="demo_quiz"><img src="/data/img/icon-quiz.webp" alt="" width="96" height="96" /><span class="demo__live">Jeu</span><b>Jouer contre l'IA</b><small>Qui reconnaît le mieux un cancer ?</small></a>
+  </div>
+</section>
+
+<!-- ================================================= CHIFFRES -->
+<section class="wrap" aria-label="Le cancer du sein en chiffres">
+  <div class="stats">
+    <div class="stat"><b>61&nbsp;214</b><span>nouveaux cas de cancer du sein en France en 2023. C'est le cancer le plus fréquent chez la femme.</span><cite>Institut national du cancer, 2026</cite></div>
+    <div class="stat"><b>12&nbsp;765</b><span>décès la même année&nbsp;: la première cause de décès par cancer chez la femme.</span><cite>Institut national du cancer, 2026</cite></div>
+    <div class="stat"><b><em>88&nbsp;%</em></b><span>des femmes sont en vie cinq ans après le diagnostic. Plus il est trouvé tôt, plus on guérit.</span><cite>Institut national du cancer, 2026</cite></div>
+    <div class="stat"><b>50–74&nbsp;ans</b><span>une mammographie tous les deux ans, prise en charge à 100&nbsp;%, sans avance de frais.</span><cite>Service-public.fr</cite></div>
+  </div>
+</section>
+
+<!-- ================================================= 1. COMPRENDRE -->
+<section class="section" id="comprendre" aria-labelledby="h-comprendre">
+  <div class="section__head">
+    <span class="section__num">01 · Comprendre</span>
+    <h2 id="h-comprendre" class="title" data-split>Un cancer, c'est d'abord des cellules qui se dérèglent.</h2>
+  </div>
+  <div class="wrap split">
+    <div class="art"><img src="/data/img/cellules.webp" alt="Un amas de cellules blanches, au milieu duquel trois cellules roses, plus grosses et irrégulières, se multiplient." width="1536" height="1024" loading="lazy" /></div>
+    <ol class="steps">
+      <li><div><h3>Des cellules se dérèglent</h3><p>Dans le sein, quelques cellules ne respectent plus les règles&nbsp;: elles se multiplient sans s'arrêter.</p></div></li>
+      <li><div><h3>Elles forment une tumeur</h3><p>Cette petite masse peut être visible sur une mammographie bien avant qu'on la sente au toucher.</p></div></li>
+      <li><div><h3>Elles peuvent voyager</h3><p>Certaines cellules partent vers les ganglions de l'aisselle. Pour le savoir, on analyse le premier d'entre eux, le «&nbsp;ganglion sentinelle&nbsp;», au microscope.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================================================= 2. DÉPISTER -->
+<section class="section" id="depister" aria-labelledby="h-depister">
+  <div class="section__head">
+    <span class="section__num">02 · Le détecter tôt</span>
+    <h2 id="h-depister" class="title" data-split>Trouvé tôt, il se soigne beaucoup mieux.</h2>
+    <p class="lead">C'est tout l'intérêt du dépistage&nbsp;: repérer une anomalie avant qu'elle ne donne le moindre symptôme.</p>
+  </div>
+  <div class="wrap split split--rev">
+    <div class="art art--stack"><img src="/data/img/depistage.webp" alt="Un mammographe moderne et blanc, à côté d'un petit calendrier marqué d'une pastille rose." width="1536" height="1024" loading="lazy" /></div>
+    <div class="card">
+      <h3>Le dépistage organisé, en pratique</h3>
+      <ul class="checklist">
+        <li>De 50 à 74 ans, l'Assurance maladie vous invite tous les deux ans.</li>
+        <li>Une mammographie et un examen clinique chez le radiologue de votre choix, pris en charge à 100&nbsp;%.</li>
+        <li>Si les clichés sont jugés normaux, un second radiologue les relit. Deux regards valent mieux qu'un.</li>
+      </ul>
+      <h3 style="margin-top:26px">À tout âge, consultez si vous remarquez</h3>
+      <ul class="checklist">
+        <li>une boule dans un sein, même indolore&nbsp;;</li>
+        <li>un sein qui change de forme, un mamelon rétracté ou un écoulement&nbsp;;</li>
+        <li>une peau rouge, gonflée ou en «&nbsp;peau d'orange&nbsp;»&nbsp;;</li>
+        <li>un ganglion sous l'aisselle.</li>
+      </ul>
+      <p class="pill-note">Ces signes ont souvent une autre cause, bénigne. Seul un médecin peut le dire. <a href="https://www.ameli.fr/assure/sante/themes/cancer-sein/symptomes-diagnostic" rel="noopener" target="_blank">Source&nbsp;: ameli.fr</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================= 3. CE QUE FAIT L'IA -->
+<section class="section" id="ia" aria-labelledby="h-ia">
+  <div class="section__head">
+    <span class="section__num">03 · Ce que fait l'IA</span>
+    <h2 id="h-ia" class="title" data-split>L'IA ne soigne pas. Elle aide à mieux voir.</h2>
+    <p class="lead">Une intelligence artificielle apprend à partir de milliers d'images déjà analysées par des médecins. Ensuite, elle repère des motifs, sans jamais se fatiguer. Voici ce que les études publiées en disent.</p>
+  </div>
+  <div class="wrap">
+    <div class="art" style="aspect-ratio:21/9;margin-bottom:14px"><img src="/data/img/ia-mammo.webp" alt="Une plaque de verre où apparaît une radiographie abstraite, une petite zone entourée d'un cercle rose." width="1536" height="1024" loading="lazy" /></div>
+    <div class="trio" id="studies"></div>
+  </div>
+</section>
+
+<!-- ================================================= 4. ESSAYER : MAMMOGRAPHIE -->
+<section class="section" id="essayer" aria-labelledby="h-essayer">
+  <div class="section__head">
+    <span class="section__num">04 · À vous d'essayer</span>
+    <p class="ai-status" data-ai-status data-state="loading"><span class="live-dot"></span><span class="ai-status__t">Les 2 IA se chargent…</span></p>
+    <h2 id="h-essayer" class="title" data-split>Demandez à l'IA de lire une mammographie.</h2>
+    <p class="lead">Choisissez un cas, puis cliquez sur «&nbsp;Demander à l'IA&nbsp;». Ce sont de vraies mammographies, publiques et anonymes&nbsp;: le radiologue a entouré une zone suspecte, et notre IA dit, en direct, si elle lui semble plutôt rassurante ou plutôt inquiétante.</p>
+  </div>
+  <div class="wrap">
+    <div class="lab">
+      <div class="lab__top">
+        <div class="lab__step"><span class="lab__n">1</span>Choisissez un cas</div>
+        <span class="small muted">Images CBIS-DDSM, licence CC BY 3.0</span>
+      </div>
+      <div class="cases" role="radiogroup" aria-label="Choisir une mammographie" id="mammo-picker"></div>
+      <div class="lab__top" style="margin-top:22px">
+        <div class="lab__step"><span class="lab__n">2</span>Demandez à l'IA, puis découvrez la vérité</div>
+      </div>
+      <div class="lab__grid">
+        <figure class="film" id="negatoscope">
+          <img id="mammo-img" alt="" width="1100" height="2000" />
+          <svg id="mammo-mark" aria-hidden="true"></svg>
+          <figcaption id="mammo-cap"></figcaption>
+        </figure>
+        <div class="panel">
+          <div class="zoom" id="mammo-zoom">
+            <img id="mammo-zoom-img" alt="" width="640" height="640" />
+            <canvas id="mammo-cam" width="224" height="224" aria-hidden="true"></canvas>
+            <span class="zoom__label">La zone entourée, en gros plan</span>
+          </div>
+          <dl class="facts-mini" id="mammo-specs"></dl>
+          <div class="actions">
+            <button class="btn btn--rose btn--xl btn--glow" id="mammo-run" type="button"><img src="/data/img/icon-ia.webp" alt="" width="30" height="30" />Demander à l'IA</button>
+          </div>
+          <div class="answer" id="mammo-gauge" hidden aria-live="polite">
+            <p class="answer__big"></p>
+            <div class="meter"><span class="meter__fill"></span><span class="meter__thr"></span></div>
+            <div class="meter__legend"><span>plutôt bénigne</span><span>plutôt maligne</span></div>
+            <p class="small muted" style="margin-top:10px">Les zones colorées montrent ce que l'IA a le plus regardé.</p>
+            <button class="btn btn--line" id="mammo-truth" type="button" style="margin-top:14px" hidden>Voir le vrai résultat (biopsie)</button>
+          </div>
+          <p class="truth" id="mammo-truth-text" hidden></p>
+          <p class="status" id="mammo-status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+    <p class="small muted" style="text-align:center;margin-top:16px" id="mammo-score-text"></p>
+  </div>
+</section>
+
+<!-- ================================================= 5. ESSAYER : MICROSCOPE -->
+<section class="section" id="microscope" aria-labelledby="h-micro">
+  <div class="section__head">
+    <span class="section__num">05 · Au microscope</span>
+    <h2 id="h-micro" class="title" data-split>Puis l'IA cherche des cellules cancéreuses dans un ganglion.</h2>
+    <p class="lead">Voici une vraie lame de ganglion, colorée en rose et violet. Cliquez sur «&nbsp;Lancer l'analyse&nbsp;»&nbsp;: l'IA la découpe en milliers de petits carrés et les examine un par un, sous vos yeux. Les zones qui s'allument sont celles où elle voit des cellules cancéreuses.</p>
+  </div>
+  <div class="wrap">
+    <div class="art" style="aspect-ratio:21/9;margin-bottom:14px"><img src="/data/img/microscope.webp" alt="Un microscope blanc dont la lame, colorée en rose et violet, s'illumine." width="1536" height="1024" loading="lazy" /></div>
+    <div class="lab">
+      <div class="scope" id="scope">
+        <div class="scope__viewer" id="osd" role="application" aria-label="Lame de ganglion agrandissable. Pincement, double-clic, ou touches plus et moins."></div>
+        <canvas class="scope__heat" id="heat" aria-hidden="true"></canvas>
+        <canvas class="scope__truth" id="truth" aria-hidden="true"></canvas>
+        <div class="scope__scanline" id="scanline" aria-hidden="true"></div>
+        <div class="scope__hud">
+          <div><span class="live-dot"></span>Carrés analysés <b id="hud-count">0</b></div>
+          <div>Par carré <b id="hud-ms">–</b></div>
+        </div>
+        <div class="scope__zoom" role="group" aria-label="Zoom">
+          <button type="button" id="zoom-in" aria-label="Zoomer">+</button>
+          <button type="button" id="zoom-out" aria-label="Dézoomer">−</button>
+          <button type="button" id="zoom-home" aria-label="Revenir à la vue d'ensemble">⤢</button>
+        </div>
+      </div>
+      <div class="scope__controls">
+        <button class="btn btn--rose btn--xl btn--glow" id="scan-run" type="button"><img src="/data/img/icon-microscope.webp" alt="" width="30" height="30" />Lancer l'analyse</button>
+        <div class="seg" role="group" aria-label="Affichage">
+          <button type="button" class="seg__b is-on" data-layer="heat" aria-pressed="true">Ce que voit l'IA</button>
+          <button type="button" class="seg__b" data-layer="truth" aria-pressed="false">Ce qu'ont tracé les médecins</button>
+          <button type="button" class="seg__b" data-layer="none" aria-pressed="false">Lame seule</button>
+        </div>
+      </div>
+      <p class="status" id="scan-status" aria-live="polite" style="margin-top:12px"></p>
+      <div class="legend" aria-hidden="true"><span>Probabilité de cellules cancéreuses</span><span>faible</span><i class="legend__ramp"></i><span>forte</span></div>
+      <p class="small muted" id="scan-note" style="margin:8px 0 0"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================= 6. À VOUS DE JOUER -->
+<section class="section" id="a-vous" aria-labelledby="h-quiz">
+  <div class="section__head">
+    <span class="section__num">06 · À vous de jouer</span>
+    <h2 id="h-quiz" class="title" data-split>Feriez-vous mieux que l'IA&nbsp;?</h2>
+    <p class="lead">Huit petits carrés d'une vraie lame. Pour chacun&nbsp;: cancer ou sain&nbsp;? Indice&nbsp;: les cellules cancéreuses ont souvent de gros noyaux pâles, serrés les uns contre les autres. Les cellules saines du ganglion sont petites, rondes et très foncées.</p>
+  </div>
+  <div class="wrap">
+    <div class="quiz__bar"><span id="quiz-progress">0 sur 8 répondus</span></div>
+    <div class="quiz" id="quiz"></div>
+    <div class="quiz__result" id="quiz-result" aria-live="polite" hidden></div>
+  </div>
+</section>
+
+<!-- ================================================= 7. ELLE SE TROMPE -->
+<section class="section" id="erreurs" aria-labelledby="h-err">
+  <div class="section__head">
+    <span class="section__num">07 · Ses limites</span>
+    <h2 id="h-err" class="title" data-split>L'IA se trompe aussi. Et c'est important de le savoir.</h2>
+    <p class="lead" id="errors-lead"></p>
+  </div>
+  <div class="wrap">
+    <div class="split" style="align-items:start">
+      <div class="card errcard"><img class="errcard__icon" src="/data/img/verdict-erreur.webp" alt="" width="64" height="64" /><h3>Fausses alertes</h3><p class="small muted" style="margin:0">Des cellules saines, et pourtant l'IA s'inquiète.</p><div class="tiles" id="err-fp"></div></div>
+      <div class="card errcard"><img class="errcard__icon" src="/data/img/verdict-cancer.webp" alt="" width="64" height="64" /><h3>Cancers manqués</h3><p class="small muted" style="margin:0">Au bord de la tumeur, des cellules cancéreuses que l'IA n'a pas vues.</p><div class="tiles" id="err-fn"></div></div>
+    </div>
+    <div class="card stainlab" style="margin-top:14px">
+      <div class="stainlab__img"><canvas id="stain-canvas" width="192" height="192" aria-label="Petit carré de ganglion dont on fait varier la coloration"></canvas><div class="stain-gauge" id="stain-gauge"><span></span></div></div>
+      <div>
+        <h3>Changez juste la couleur. L'IA change d'avis.</h3>
+        <p class="muted" style="margin:0">D'un hôpital à l'autre, les lames ne sont jamais colorées exactement pareil. Faites glisser les curseurs&nbsp;: les cellules sont les mêmes, mais la réponse de l'IA bouge. C'est pour cela qu'un outil doit être vérifié dans chaque hôpital avant d'être utilisé.</p>
+        <p class="small" style="margin:14px 0 0;color:var(--rose-deep);font-weight:600">Astuce : poussez les deux curseurs à fond vers la droite.</p>
+        <label class="range"><span>Teinte</span><input type="range" id="stain-hue" min="-40" max="40" value="0" step="1" /></label>
+        <label class="range"><span>Intensité</span><input type="range" id="stain-sat" min="40" max="160" value="100" step="1" /></label>
+        <p class="score-out" id="stain-out" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================= 8. LE MÉDECIN DÉCIDE -->
+<section class="section" id="medecin" aria-labelledby="h-medecin">
+  <div class="wrap split">
+    <div class="art"><img src="/data/img/humain.webp" alt="Un stéthoscope posé à côté d'une tablette qui affiche une carte de chaleur." width="1536" height="1024" loading="lazy" /></div>
+    <div>
+      <span class="section__num">08 · Qui décide&nbsp;?</span>
+      <h2 id="h-medecin" class="title" data-split>Le médecin reste aux commandes.</h2>
+      <p class="lead" style="margin-top:20px">À l'hôpital, l'IA est un second regard, jamais le seul. Les outils utilisés en vrai sont évalués et autorisés comme des dispositifs médicaux. Le diagnostic, lui, s'appuie toujours sur un examen, une biopsie et un médecin.</p>
+      <p class="pill-note">Cette page, elle, n'est pas un dispositif médical&nbsp;: c'est une démonstration pour comprendre.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================= 9. EN FRANCE -->
+<section class="section" id="france" aria-labelledby="h-france">
+  <div class="section__head">
+    <span class="section__num">09 · En France</span>
+    <h2 id="h-france" class="title" data-split>Ceux qui font avancer la lutte, en France.</h2>
+    <p class="lead">Hôpitaux, chercheurs, associations et entreprises&nbsp;: un aperçu des acteurs publics et privés, avec un lien vers leur site officiel.</p>
+  </div>
+  <div class="wrap">
+    <div class="art" style="aspect-ratio:21/9;margin-bottom:24px"><img src="/data/img/france.webp" alt="Maquette blanche d'un hôpital, d'un laboratoire et d'une start-up reliés par de fins fils roses." width="1536" height="1024" loading="lazy" /></div>
+    <div class="tabs" role="tablist" aria-label="Type d'acteur" id="actor-tabs"></div>
+    <div class="actors" id="actors" role="tabpanel"></div>
+    <p class="small muted" style="text-align:center;margin-top:16px">Liste indicative, sans lien avec cette page. Aucun de ces acteurs n'a participé à cette démonstration.</p>
+  </div>
+</section>
+
+<!-- ================================================= 10. MÉTHODE -->
+<section class="section" id="methode" aria-labelledby="h-methode" style="padding-top:clamp(70px,9vw,120px)">
+  <div class="wrap">
+    <details class="method">
+      <summary id="h-methode">Pour les curieux&nbsp;: comment ces deux IA ont été construites</summary>
+      <div class="method__body">
+        <p class="muted" style="margin:0 0 16px">Pas de modèle emprunté, pas de chiffre recopié&nbsp;: nous avons entraîné les deux modèles nous-mêmes, puis mesuré leurs résultats sur des images qu'ils n'avaient jamais vues (les jeux de test officiels). Ils tournent ensuite dans votre navigateur, grâce à ONNX Runtime Web.</p>
+        <div class="models" id="models"></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ================================================= CONVERSION -->
+<section class="wrap cta" aria-labelledby="h-cta">
+  <div class="cta__box">
+    <div class="cta__text">
+      <span class="section__num">Qui a fait cette page&nbsp;?</span>
+      <h2 id="h-cta" class="title" data-split>La même rigueur, pour votre projet.</h2>
+      <p class="lead">Je suis Yanis Zedira, expert en intelligence artificielle et fondateur d'YZ Automation. La santé me passionne, en particulier l'oncologie et le diabète&nbsp;: c'est pour cela que je développe ce genre de plateformes, pour rendre l'IA compréhensible et utile. Celle-ci, je l'ai pensée, entraînée et construite de bout en bout.</p>
+      <div class="doors">
+        <a class="door" href="/creation-site-internet" data-track="porte_site">Un site qui marque les esprits</a>
+        <a class="door" href="/agence-automatisation-ia-paris" data-track="porte_agent">Des agents IA et des automatisations</a>
+        <a class="door" href="/contact" data-track="porte_data_sante">Un projet de données ou d'IA en santé</a>
+      </div>
+      <a class="btn btn--ink btn--xl" href="/contact" data-track="rdv_fin">Prendre rendez-vous, 15 minutes offertes</a>
+    </div>
+    <div class="cta__art"><img src="/data/img/cta.webp" alt="" width="1536" height="1024" loading="lazy" /></div>
+  </div>
+</section>
+
+<!-- ================================================= SOURCES -->
+<section class="wrap" id="sources" aria-labelledby="h-sources" style="margin-top:60px">
+  <details class="method">
+    <summary id="h-sources">Sources, licences et limites</summary>
+    <div class="sources__grid" id="sources-list"></div>
+  </details>
+</section>
+</main>
+
+<footer class="footer">
+  <p><b>Page pédagogique.</b> Elle ne pose aucun diagnostic et ne remplace pas l'avis d'un professionnel de santé. Pour toute question sur votre santé, parlez-en à votre médecin.</p>
+  <p class="small muted">© 2026 YZ Automation · Textes sous licence CC BY 4.0 · Images médicales&nbsp;: CBIS-DDSM (CC BY 3.0), CAMELYON16 et PatchCamelyon (CC0) · Illustrations générées par IA · <a href="https://yz-automation.fr/legal">Mentions légales</a> · <a href="https://yz-automation.fr/ia-sante/cancer-du-sein">Version en ligne</a></p>
+  <p class="small muted" id="api-stats" hidden aria-live="polite"></p>
+</footer>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

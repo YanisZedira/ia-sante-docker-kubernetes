@@ -1,0 +1,22 @@
+# Dépendances et build : réinstallées / reconstruits dans l'image
+node_modules/
+dist/
+
+# Outils et fichiers locaux
+.git
+.gitignore
+.vscode/
+.idea/
+.DS_Store
+*.log
+npm-debug.log*
+.env
+.env.*
+
+# Docker lui-même
+Dockerfile
+.dockerignore
+
+# Scripts de préparation des données (Python, captures) : inutiles au build
+scripts/*
+!scripts/postbuild.mjs

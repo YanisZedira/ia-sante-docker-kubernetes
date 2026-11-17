@@ -1,0 +1,218 @@
+[
+ {
+  "fichier": "t_41_35.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 35,
+  "gy": 41,
+  "luminosite": 121.9
+ },
+ {
+  "fichier": "t_38_66.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 66,
+  "gy": 38,
+  "luminosite": 121.3
+ },
+ {
+  "fichier": "t_36_39.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 39,
+  "gy": 36,
+  "luminosite": 122.6
+ },
+ {
+  "fichier": "t_37_70.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 70,
+  "gy": 37,
+  "luminosite": 126.1
+ },
+ {
+  "fichier": "t_42_40.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 40,
+  "gy": 42,
+  "luminosite": 123.8
+ },
+ {
+  "fichier": "t_37_40.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 40,
+  "gy": 37,
+  "luminosite": 125.4
+ },
+ {
+  "fichier": "t_49_49.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 49,
+  "gy": 49,
+  "luminosite": 122.9
+ },
+ {
+  "fichier": "t_37_39.jpg",
+  "groupe": "vrai_positif",
+  "etiquette": 1,
+  "probabilite": 1.0,
+  "gx": 39,
+  "gy": 37,
+  "luminosite": 126.3
+ },
+ {
+  "fichier": "t_5_3.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.0,
+  "gx": 3,
+  "gy": 5,
+  "luminosite": 202.2
+ },
+ {
+  "fichier": "t_42_53.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.004,
+  "gx": 53,
+  "gy": 42,
+  "luminosite": 92.5
+ },
+ {
+  "fichier": "t_27_57.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.009,
+  "gx": 57,
+  "gy": 27,
+  "luminosite": 101.5
+ },
+ {
+  "fichier": "t_48_34.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.006,
+  "gx": 34,
+  "gy": 48,
+  "luminosite": 86.5
+ },
+ {
+  "fichier": "t_16_31.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.004,
+  "gx": 31,
+  "gy": 16,
+  "luminosite": 102.4
+ },
+ {
+  "fichier": "t_49_2.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.006,
+  "gx": 2,
+  "gy": 49,
+  "luminosite": 177.2
+ },
+ {
+  "fichier": "t_36_48.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.006,
+  "gx": 48,
+  "gy": 36,
+  "luminosite": 106.4
+ },
+ {
+  "fichier": "t_4_62.jpg",
+  "groupe": "vrai_negatif",
+  "etiquette": 0,
+  "probabilite": 0.003,
+  "gx": 62,
+  "gy": 4,
+  "luminosite": 90.5
+ },
+ {
+  "fichier": "t_4_21.jpg",
+  "groupe": "faux_positif",
+  "etiquette": 0,
+  "probabilite": 0.702,
+  "gx": 21,
+  "gy": 4,
+  "luminosite": 105.5
+ },
+ {
+  "fichier": "t_3_21.jpg",
+  "groupe": "faux_positif",
+  "etiquette": 0,
+  "probabilite": 0.602,
+  "gx": 21,
+  "gy": 3,
+  "luminosite": 127.2
+ },
+ {
+  "fichier": "t_2_40.jpg",
+  "groupe": "faux_positif",
+  "etiquette": 0,
+  "probabilite": 0.853,
+  "gx": 40,
+  "gy": 2,
+  "luminosite": 104.6
+ },
+ {
+  "fichier": "t_39_22.jpg",
+  "groupe": "faux_positif",
+  "etiquette": 0,
+  "probabilite": 0.769,
+  "gx": 22,
+  "gy": 39,
+  "luminosite": 105.7
+ },
+ {
+  "fichier": "t_3_43.jpg",
+  "groupe": "faux_positif",
+  "etiquette": 0,
+  "probabilite": 0.786,
+  "gx": 43,
+  "gy": 3,
+  "luminosite": 113.3
+ },
+ {
+  "fichier": "t_30_32.jpg",
+  "groupe": "faux_positif",
+  "etiquette": 0,
+  "probabilite": 0.74,
+  "gx": 32,
+  "gy": 30,
+  "luminosite": 110.7
+ },
+ {
+  "fichier": "t_45_36.jpg",
+  "groupe": "faux_negatif",
+  "etiquette": 1,
+  "probabilite": 0.021,
+  "gx": 36,
+  "gy": 45,
+  "luminosite": 108.5
+ },
+ {
+  "fichier": "t_41_33.jpg",
+  "groupe": "faux_negatif",
+  "etiquette": 1,
+  "probabilite": 0.04,
+  "gx": 33,
+  "gy": 41,
+  "luminosite": 122.4
+ }
+]

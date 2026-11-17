@@ -1,0 +1,42 @@
+# Test de charge k6 lancé DANS le cluster, pour voir le HPA ajouter des pods back.
+#   kubectl -n ia-sante create configmap k6-script --from-file=deploy/tests/k6-script.js
+#   kubectl apply -f deploy/tests/k6-job.yaml
+#   kubectl -n ia-sante get hpa back-hpa --watch
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k6-load-test
+  namespace: ia-sante
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels:
+        role: load-test # autorisé à joindre le back par la NetworkPolicy
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 12345
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: k6
+          image: grafana/k6:1.3.0
+          args: ["run", "/scripts/k6-script.js"]
+          env:
+            - name: TARGET
+              value: http://back-service:4000
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+          resources:
+            requests: { cpu: "200m", memory: "64Mi" }
+            limits: { cpu: "1", memory: "256Mi" }
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+      volumes:
+        - name: script
+          configMap:
+            name: k6-script

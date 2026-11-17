@@ -1,0 +1,12 @@
+# --- Namespace dédié au projet ---
+# Pod Security Admission : « baseline » imposé (PostgreSQL officiel démarre en root avant de rendre
+# la main à l'utilisateur postgres), « restricted » signalé : front et back le respectent déjà.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted

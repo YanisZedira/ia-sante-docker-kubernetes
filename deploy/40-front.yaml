@@ -1,0 +1,92 @@
+---
+# --- Deployment du front (nginx + plateforme, IA exécutées dans le navigateur) ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-deployment
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: front
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      component: front
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: ia-sante
+        component: front
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101 # utilisateur nginx de l'image nginx-unprivileged
+        runAsGroup: 101
+        fsGroup: 101
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: web
+          image: ghcr.io/yaniszedira/ia-sante-front:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef: { name: front-configmap } # BACK_URL
+          resources:
+            requests: { cpu: "50m", memory: "32Mi" }
+            limits: { cpu: "250m", memory: "128Mi" }
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          lifecycle:
+            preStop: # laisse le temps au Service de retirer le pod avant l'arrêt de nginx
+              exec:
+                command: ["sleep", "5"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            # seuls dossiers inscriptibles : cache nginx et configuration générée au démarrage
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: tmp
+          emptyDir: { sizeLimit: 64Mi }
+        - name: nginx-conf
+          emptyDir: { sizeLimit: 1Mi }
+---
+# --- Service du front, exposé hors du cluster par un NodePort (http://<nœud>:30080) ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-service
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: front
+spec:
+  type: NodePort
+  selector:
+    component: front
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      nodePort: 30080

@@ -1,0 +1,28 @@
+# --- Configuration non sensible (le mot de passe est dans le Secret postgres-secret) ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: back-configmap
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+data:
+  # Connexion PostgreSQL (format libpq, lu par l'API et par le conteneur postgres)
+  PGHOST: "postgres-service"
+  PGPORT: "5432"
+  PGUSER: "iasante"
+  PGDATABASE: "iasante"
+  ROOT_PATH: "/api" # publiée sous /api (front nginx ou Gateway) : la doc Swagger reste sur /api/docs
+  LOG_LEVEL: "info"
+  APP_VERSION: "1.0.0"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: front-configmap
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+data:
+  # Nom complet obligatoire : le résolveur de nginx n'utilise pas les domaines de recherche de /etc/resolv.conf
+  BACK_URL: "http://back-service.ia-sante.svc.cluster.local:4000"

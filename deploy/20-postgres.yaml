@@ -1,0 +1,111 @@
+---
+# --- PersistentVolume : 1 Gio sur le disque du nœud (hostPath, adapté à un cluster local à un nœud) ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ia-sante-postgres-pv
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: postgres
+spec:
+  storageClassName: manual # classe « manuelle » : pas de provisionnement dynamique
+  capacity:
+    storage: 1Gi
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain # les données restent si le PVC est supprimé
+  hostPath:
+    path: /var/local-data/ia-sante-postgres
+    type: DirectoryOrCreate
+---
+# --- PersistentVolumeClaim : réclamé par PostgreSQL, lié explicitement au PV ci-dessus ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: postgres
+spec:
+  storageClassName: manual
+  volumeName: ia-sante-postgres-pv
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+# --- Service headless : nom DNS stable « postgres-service » pour le StatefulSet ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: postgres
+spec:
+  clusterIP: None
+  selector:
+    component: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+---
+# --- StatefulSet PostgreSQL : identité et stockage stables (bonne pratique pour une base) ---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: postgres
+spec:
+  serviceName: postgres-service
+  replicas: 1 # une seule instance : PostgreSQL ne se réplique pas sans outil dédié
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: ia-sante
+        component: postgres
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom: { configMapKeyRef: { name: back-configmap, key: PGUSER } }
+            - name: POSTGRES_DB
+              valueFrom: { configMapKeyRef: { name: back-configmap, key: PGDATABASE } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: postgres-secret, key: PGPASSWORD } }
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata # sous-dossier : le point de montage reste propre
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits: { cpu: "500m", memory: "256Mi" }
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc

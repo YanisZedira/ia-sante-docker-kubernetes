@@ -131,4 +131,4 @@ jobs:
           kubectl -n ia-sante rollout status deploy/front-deployment --timeout=300s
       - name: Aucun cluster de production
         if: steps.kc.outputs.present != 'yes'
-        run: echo "Secret KUBE_CONFIG absent : seul le déploiement kind de l'étape précédente a été fait."
+        run: echo "Secret KUBE_CONFIG absent, seul le déploiement kind de l étape précédente a été fait."

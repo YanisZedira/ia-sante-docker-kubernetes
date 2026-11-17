@@ -1,0 +1,8 @@
+[
+ {"kind": "donnees", "title": "CBIS-DDSM (Curated Breast Imaging Subset of DDSM)", "publisher": "The Cancer Imaging Archive", "license": "CC BY 3.0", "url": "https://www.cancerimagingarchive.net/collection/cbis-ddsm/"},
+ {"kind": "donnees", "title": "PatchCamelyon (PCam)", "publisher": "Veeling et al., 2018", "license": "CC0", "url": "https://github.com/basveeling/pcam"},
+ {"kind": "donnees", "title": "CAMELYON16, lame tumor_091", "publisher": "Radboudumc et UMC Utrecht, via AWS Open Data", "license": "CC0", "url": "https://camelyon16.grand-challenge.org/"},
+ {"kind": "etude", "title": "Dépistage par mammographie assisté par IA (essai MASAI)", "publisher": "Hernström et al., The Lancet Digital Health, 2025", "license": null, "url": "https://doi.org/10.1016/S2589-7500(24)00267-x"},
+ {"kind": "etude", "title": "Détection de métastases ganglionnaires par apprentissage profond", "publisher": "Ehteshami Bejnordi et al., JAMA, 2017", "license": null, "url": "https://doi.org/10.1001/jama.2017.14585"},
+ {"kind": "reference", "title": "Le dépistage du cancer du sein en pratique", "publisher": "Institut national du cancer", "license": null, "url": "https://www.cancer.fr/toute-l-information-sur-les-cancers/se-faire-depister/les-depistages/depistage-du-cancer-du-sein/le-depistage-en-pratique"}
+]

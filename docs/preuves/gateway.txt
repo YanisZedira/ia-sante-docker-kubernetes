@@ -1,0 +1,20 @@
+$ kubectl -n ia-sante get gateway,httproute
+NAME                                                 CLASS   ADDRESS   PROGRAMMED   AGE
+gateway.gateway.networking.k8s.io/ia-sante-gateway   envoy             False        60m
+
+NAME                                                       HOSTNAMES   AGE
+httproute.gateway.networking.k8s.io/ia-sante-api-route                 60m
+httproute.gateway.networking.k8s.io/ia-sante-front-route               60m
+
+ROUTE                  ACCEPTED   REFS
+ia-sante-api-route     True       True
+ia-sante-front-route   True       True
+
+$ kubectl -n envoy-gateway-system port-forward service/envoy-ia-sante-ia-sante-gateway-b1dc76a6 8831:80, puis :
+  curl http://127.0.0.1:8831/api/                      -> 200  {"service":"ia-sante-back","version":"1.0.0","pod":"back-deployment-65d4676894-txbcf"}
+  curl http://127.0.0.1:8831/api/health                -> 200  {"status":"ok"}
+  curl http://127.0.0.1:8831/api/stats                 -> 200
+  curl http://127.0.0.1:8831/ia-sante/cancer-du-sein/  -> 200
+  curl http://127.0.0.1:8831/healthz                   -> 200
+
+Remarque : kind n a pas de LoadBalancer, la Gateway reste donc sans adresse externe (Programmed=False) ; Envoy route bien le trafic, comme le montrent les réponses ci-dessus.

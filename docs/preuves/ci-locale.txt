@@ -1,0 +1,26 @@
+$ docker run --rm ia-sante-back:dev sh -c "ruff check app tests && ruff format --check app tests && pytest -v"
+All checks passed!
+14 files already formatted
+============================= test session starts ==============================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.16.0
+collecting ... collected 6 items
+tests/test_api.py::test_root_et_sondes PASSED                            [ 16%]
+tests/test_api.py::test_modeles PASSED                                   [ 33%]
+tests/test_api.py::test_cas_et_filtre PASSED                             [ 50%]
+tests/test_api.py::test_sources PASSED                                   [ 66%]
+tests/test_api.py::test_analyses_et_stats PASSED                         [ 83%]
+tests/test_api.py::test_validation_stricte PASSED                        [100%]
+============================== 6 passed in 0.86s ===============================
+
+$ npx tsc -p tsconfig.json   (front, vérification des types)
+0 erreur TypeScript
+
+$ hadolint back/Dockerfile front/Dockerfile
+  back/Dockerfile : aucun avertissement
+-:29 DL3066 info: Non-numeric user-id may not be resolvable by host system
+  front/Dockerfile : aucun avertissement

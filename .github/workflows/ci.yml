@@ -1,0 +1,107 @@
+# Intégration continue : à chaque push sur develop ou sur une branche feature/, et à chaque pull request.
+# Tests -> build des images -> scan de sécurité -> démarrage réel de la stack docker compose.
+name: CI
+
+on:
+  push:
+    branches: [develop, "feature/**"]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  back-tests:
+    name: Back - lint et tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - name: Installer les dépendances
+        run: uv venv && uv pip install -r pyproject.toml pytest httpx ruff
+      - name: Lint (ruff)
+        run: uv run --no-sync ruff check app tests && uv run --no-sync ruff format --check app tests
+      - name: Tests (pytest, base SQLite)
+        run: uv run --no-sync pytest -q
+
+  front-build:
+    name: Front - TypeScript et build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Vérification des types
+        run: npx tsc -p tsconfig.json
+      - name: Build Vite
+        run: npm run build
+
+  manifests:
+    name: Kubernetes - validation des manifestes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: kubeconform
+        run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/download/v0.7.0/kubeconform-linux-amd64.tar.gz | tar xz
+          ./kubeconform -strict -summary -ignore-missing-schemas deploy/*.yaml deploy/tests/k6-job.yaml
+      - name: Hadolint (Dockerfiles)
+        run: |
+          docker run --rm -i hadolint/hadolint hadolint --ignore DL3018 --failure-threshold warning - < back/Dockerfile
+          docker run --rm -i hadolint/hadolint hadolint --ignore DL3018 --failure-threshold warning - < front/Dockerfile
+
+  compose-smoke:
+    name: Docker - build, scan et docker compose up
+    needs: [back-tests, front-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fichier .env de CI (mot de passe jetable, jamais versionné)
+        run: |
+          cp .env.example .env
+          sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$(openssl rand -hex 16)/" .env
+      - name: Build des images
+        run: docker compose build
+      - name: Taille des images
+        run: docker images --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | grep ia-sante
+      - name: Scan de vulnérabilités (Trivy, CRITICAL bloquant)
+        run: |
+          for img in ia-sante-back ia-sante-front; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.67.2 image \
+              --scanners vuln --severity CRITICAL --ignore-unfixed --exit-code 1 --no-progress ghcr.io/yaniszedira/$img:latest
+          done
+      - name: docker compose up
+        run: docker compose up -d --wait --wait-timeout 120
+      - name: Tests de fumée
+        run: |
+          set -e
+          B=http://127.0.0.1:8080
+          for p in /healthz /ia-sante/ /ia-sante/cancer-du-sein/ /ia-sante/model/mammo.onnx /api/health /api/ready /api/models /api/cases /api/stats; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' $B$p); echo "$p -> $c"; [ "$c" = 200 ]
+          done
+          curl -sI $B/ia-sante/ort/ort-wasm-simd-threaded.mjs | grep -qi '^content-type: text/javascript'
+          curl -sf -X POST $B/api/analyses -H 'Content-Type: application/json' -d '{"model":"pcam","kind":"quiz","score":0.5}'
+          curl -sf $B/api/stats | grep -q '"total":1'
+      - name: Journaux en cas d'échec
+        if: failure()
+        run: docker compose logs
+      - name: Arrêt
+        if: always()
+        run: docker compose down -v

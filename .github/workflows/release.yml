@@ -1,0 +1,134 @@
+# Livraison continue : à la création d'un tag vX.Y.Z sur main.
+# Build des images -> push vers GitHub Container Registry -> déploiement Kubernetes (kubectl apply)
+# sur un cluster kind éphémère, puis vérifications complètes (auto-réparation, rolling update...).
+# Si le secret KUBE_CONFIG est défini, le même déploiement part aussi vers ce cluster.
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io/yaniszedira
+
+jobs:
+  build-and-push:
+    name: Build et push des images (GHCR)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Le tag doit pointer sur un commit de main
+        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Version (tag sans le « v »)
+        id: v
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Back
+        uses: docker/build-push-action@v6
+        with:
+          context: ./back
+          target: runtime
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/ia-sante-back:${{ steps.v.outputs.version }}
+            ${{ env.REGISTRY }}/ia-sante-back:latest
+          cache-from: type=gha,scope=back
+          cache-to: type=gha,mode=max,scope=back
+      - name: Front
+        uses: docker/build-push-action@v6
+        with:
+          context: ./front
+          target: runtime
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/ia-sante-front:${{ steps.v.outputs.version }}
+            ${{ env.REGISTRY }}/ia-sante-front:latest
+          cache-from: type=gha,scope=front
+          cache-to: type=gha,mode=max,scope=front
+
+  deploy-kubernetes:
+    name: Déploiement Kubernetes (kind) et vérifications
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version
+        id: v
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Cluster kind
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: ia-sante
+          config: kind-config.yaml
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Images publiées -> nœud kind
+        run: |
+          for s in back front; do
+            docker pull $REGISTRY/ia-sante-$s:${{ steps.v.outputs.version }}
+            kind load docker-image $REGISTRY/ia-sante-$s:${{ steps.v.outputs.version }} --name ia-sante
+          done
+      - name: metrics-server (HPA)
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.9.1/components.yaml
+          kubectl -n kube-system patch deployment metrics-server --type=json \
+            -p '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+      - name: kubectl apply
+        run: |
+          V=${{ steps.v.outputs.version }}
+          kubectl apply -f deploy/00-namespace.yaml
+          kubectl -n ia-sante create secret generic postgres-secret --from-literal=PGPASSWORD="$(openssl rand -hex 16)"
+          sed -i -E "s#(ia-sante-(back|front)):[0-9.]+#\1:$V#" deploy/30-back.yaml deploy/40-front.yaml
+          kubectl apply -f deploy/
+          kubectl -n ia-sante rollout status statefulset/postgres-statefulset --timeout=180s
+          kubectl -n ia-sante rollout status deploy/back-deployment --timeout=180s
+          kubectl -n ia-sante rollout status deploy/front-deployment --timeout=180s
+      - name: Vérifications (auto-réparation, persistance, rolling update, NetworkPolicy)
+        run: ./scripts/verifier-k8s.sh http://127.0.0.1:8830
+      - name: État en cas d'échec
+        if: failure()
+        run: |
+          kubectl -n ia-sante get all,events
+          kubectl -n ia-sante logs -l component=back --tail=50 --all-containers
+
+  deploy-production:
+    name: Déploiement sur le cluster de production (optionnel)
+    needs: deploy-kubernetes
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cluster configuré ?
+        id: kc
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: echo "present=$([ -n "$KUBE_CONFIG" ] && echo yes || echo no)" >> "$GITHUB_OUTPUT"
+      - name: kubectl apply sur le cluster cible
+        if: steps.kc.outputs.present == 'yes'
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p ~/.kube && echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config && chmod 600 ~/.kube/config
+          V=${GITHUB_REF_NAME#v}
+          sed -i -E "s#(ia-sante-(back|front)):[0-9.]+#\1:$V#" deploy/30-back.yaml deploy/40-front.yaml
+          sed -i 's/imagePullPolicy: IfNotPresent/imagePullPolicy: Always/' deploy/30-back.yaml deploy/40-front.yaml
+          kubectl apply -f deploy/
+          kubectl -n ia-sante rollout status deploy/back-deployment --timeout=300s
+          kubectl -n ia-sante rollout status deploy/front-deployment --timeout=300s
+      - name: Aucun cluster de production
+        if: steps.kc.outputs.present != 'yes'
+        run: echo "Secret KUBE_CONFIG absent : seul le déploiement kind de l'étape précédente a été fait."

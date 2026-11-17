@@ -1,0 +1,36 @@
+[
+ {
+  "slug": "mammo",
+  "name": "Lésion de mammographie",
+  "task": "Une lésion déjà repérée par un radiologue : plutôt bénigne ou plutôt maligne ?",
+  "architecture": "EfficientNet-B0 (poids ImageNet de torchvision), affiné sur CBIS-DDSM",
+  "dataset": "CBIS-DDSM, The Cancer Imaging Archive, CC BY 3.0",
+  "test_set": "704 lésions du test officiel (378 masses, 326 calcifications)",
+  "auc": 0.754,
+  "auc_ci_low": 0.717,
+  "auc_ci_high": 0.791,
+  "threshold": 0.2666,
+  "sensitivity": 0.717,
+  "specificity": 0.64,
+  "file": "model/mammo.onnx",
+  "size_mb": 16.0,
+  "input_shape": "[2, 1, 224, 224]"
+ },
+ {
+  "slug": "pcam",
+  "name": "Imagette de ganglion",
+  "task": "Une imagette de 96 × 96 pixels contient-elle du tissu métastatique en son centre ?",
+  "architecture": "Petit réseau résiduel de 1,9 million de paramètres, entraîné de zéro",
+  "dataset": "PatchCamelyon, issu de CAMELYON16, CC0",
+  "test_set": "32 768 imagettes du test officiel",
+  "auc": 0.955,
+  "auc_ci_low": 0.952,
+  "auc_ci_high": 0.957,
+  "threshold": 0.324,
+  "sensitivity": 0.842,
+  "specificity": 0.953,
+  "file": "model/pcam.onnx",
+  "size_mb": 7.8,
+  "input_shape": "[n, 3, 96, 96]"
+ }
+]

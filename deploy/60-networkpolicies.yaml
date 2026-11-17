@@ -1,0 +1,61 @@
+# --- Cloisonnement réseau (même principe que les deux réseaux du docker-compose) ---
+# Tout trafic entrant est refusé par défaut, puis seuls les chemins utiles sont ouverts :
+#   internet -> front:8080   front -> back:4000   gateway -> back:4000   back -> postgres:5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: ia-sante
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-front-from-anywhere
+  namespace: ia-sante
+spec:
+  podSelector:
+    matchLabels: { component: front }
+  policyTypes: ["Ingress"]
+  ingress:
+    - ports:
+        - { protocol: TCP, port: 8080 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-back-from-front-and-gateway
+  namespace: ia-sante
+spec:
+  podSelector:
+    matchLabels: { component: back }
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { component: front }
+        - namespaceSelector:
+            matchLabels: { kubernetes.io/metadata.name: envoy-gateway-system }
+        - podSelector:
+            matchLabels: { role: load-test } # job k6 de deploy/tests/
+      ports:
+        - { protocol: TCP, port: 4000 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-postgres-from-back
+  namespace: ia-sante
+spec:
+  podSelector:
+    matchLabels: { component: postgres }
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { component: back }
+      ports:
+        - { protocol: TCP, port: 5432 }

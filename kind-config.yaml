@@ -1,0 +1,12 @@
+# Cluster local kind à un nœud : kind create cluster --config kind-config.yaml
+# Le NodePort 30080 du front est publié sur la machine hôte (http://localhost:8830).
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: ia-sante
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080 # NodePort du front-service
+        hostPort: 8830
+        listenAddress: "127.0.0.1" # accessible seulement depuis la machine (tunnel SSH pour la démo)
+        protocol: TCP

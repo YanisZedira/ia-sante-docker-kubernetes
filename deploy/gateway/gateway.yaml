@@ -1,0 +1,62 @@
+# --- Point d'entrée HTTP par la Gateway API (successeur d'Ingress), contrôleur Envoy Gateway ---
+# Prérequis : Envoy Gateway installé (voir README, « just gateway-install »).
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: envoy
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: ia-sante-gateway
+  namespace: ia-sante
+spec:
+  gatewayClassName: envoy
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+# /api/* -> back-service (préfixe retiré : /api/stats devient /stats)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ia-sante-api-route
+  namespace: ia-sante
+spec:
+  parentRefs:
+    - name: ia-sante-gateway
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: /api }
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: back-service
+          port: 4000
+---
+# tout le reste -> front-service
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ia-sante-front-route
+  namespace: ia-sante
+spec:
+  parentRefs:
+    - name: ia-sante-gateway
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: / }
+      backendRefs:
+        - name: front-service
+          port: 8080

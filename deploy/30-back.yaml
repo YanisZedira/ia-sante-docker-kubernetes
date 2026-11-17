@@ -1,0 +1,112 @@
+---
+# --- Deployment du back (API FastAPI) ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-deployment
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: back
+spec:
+  replicas: 3 # haute disponibilité ; le HPA ajuste ensuite entre 2 et 6
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0 # mise à jour sans interruption : un ancien pod ne part que si un nouveau est prêt
+  selector:
+    matchLabels:
+      component: back
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: ia-sante
+        component: back
+    spec:
+      automountServiceAccountToken: false # l'API n'appelle jamais l'API Kubernetes
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: { type: RuntimeDefault }
+      # InitContainer : attend que PostgreSQL accepte les connexions TCP avant de lancer l'API
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.37
+          command: ["sh", "-c", "until nc -z -w 2 $PGHOST $PGPORT; do echo 'en attente de postgres...'; sleep 2; done"]
+          envFrom:
+            - configMapRef: { name: back-configmap }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          resources:
+            requests: { cpu: "10m", memory: "8Mi" }
+            limits: { cpu: "50m", memory: "16Mi" }
+      containers:
+        - name: api
+          image: ghcr.io/yaniszedira/ia-sante-back:1.0.0
+          # IfNotPresent : en local (kind), l'image chargée avec « kind load » est utilisée sans registre
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+              name: http
+          envFrom:
+            - configMapRef: { name: back-configmap } # PGHOST, PGPORT, PGUSER, PGDATABASE...
+            - secretRef: { name: postgres-secret } # PGPASSWORD
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits: { cpu: "300m", memory: "256Mi" }
+          # Startup : laisse le temps de créer les tables au premier démarrage
+          startupProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 2
+            failureThreshold: 30
+          # Liveness : le processus répond, sinon Kubernetes redémarre le conteneur (auto-réparation)
+          livenessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 15
+            timeoutSeconds: 2
+          # Readiness : la base répond, sinon le pod sort du Service le temps que ça revienne
+          readinessProbe:
+            httpGet: { path: /ready, port: http }
+            periodSeconds: 10
+            timeoutSeconds: 3
+          # Arrêt propre : le pod quitte d'abord les endpoints du Service, puis uvicorn termine
+          # les requêtes en cours (SIGTERM). Sans cette pause, quelques requêtes échouent pendant
+          # une mise à jour (mesuré : 2 erreurs sur 122 avant, 0 après).
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "5"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: tmp
+          emptyDir: { sizeLimit: 16Mi }
+---
+# --- Service interne du back (ClusterIP : joignable seulement dans le cluster) ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-service
+  namespace: ia-sante
+  labels:
+    app.kubernetes.io/part-of: ia-sante
+    component: back
+spec:
+  type: ClusterIP
+  selector:
+    component: back
+  ports:
+    - name: http
+      port: 4000
+      targetPort: http

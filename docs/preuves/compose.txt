@@ -1,0 +1,39 @@
+$ docker compose build && docker compose up -d --wait   (2026-11-17T19:57:32Z)
+ Image ghcr.io/yaniszedira/ia-sante-front:latest Built 
+ Image ghcr.io/yaniszedira/ia-sante-back:latest Built 
+ Container ia-sante-front-1 Waiting 
+ Container ia-sante-back-1 Healthy 
+ Container ia-sante-database-1 Healthy 
+ Container ia-sante-front-1 Healthy 
+
+$ docker compose ps
+SERVICE    IMAGE                                       STATUS                       PORTS
+back       ghcr.io/yaniszedira/ia-sante-back:latest    Up 13 seconds (healthy)      4000/tcp
+database   postgres:17-alpine                          Up About an hour (healthy)   5432/tcp
+front      ghcr.io/yaniszedira/ia-sante-front:latest   Up 5 seconds (healthy)       127.0.0.1:8820->8080/tcp
+
+$ curl (tests de fumée sur http://127.0.0.1:8820)
+  /healthz                                     200  text/plain  3 octets
+  /ia-sante/                                   200  text/html  3304 octets
+  /ia-sante/cancer-du-sein/                    200  text/html  26056 octets
+  /ia-sante/model/mammo.onnx                   200  application/octet-stream  16031273 octets
+  /ia-sante/model/pcam.onnx                    200  application/octet-stream  7755432 octets
+  /ia-sante/ort/ort-wasm-simd-threaded.mjs     200  text/javascript  24618 octets
+  /ia-sante/data/lame/lame.dzi                 200  application/xml  180 octets
+  /api/health                                  200  application/json  15 octets
+  /api/ready                                   200  application/json  34 octets
+  /api/models                                  200  application/json  1064 octets
+  /api/cases                                   200  application/json  3024 octets
+  /api/sources                                 200  application/json  1287 octets
+  /api/stats                                   200  application/json  126 octets
+  /api/docs                                    200  text/html; charset=utf-8  1033 octets
+
+$ curl -X POST /api/analyses
+{"id":3,"created_at":"2026-11-17T19:58:46.749227Z","model":"pcam","kind":"quiz"}
+$ curl -X POST /api/analyses (champ inconnu : refusé)
+  HTTP 422
+
+$ docker image ls   (DISK USAGE = taille décompressée sur disque, CONTENT SIZE = taille de l image transférée)
+IMAGE                                                                                  ID             DISK USAGE   CONTENT SIZE   EXTRA
+ghcr.io/yaniszedira/ia-sante-back:latest                                               2e36357c4203        290MB         68.8MB   U    
+ghcr.io/yaniszedira/ia-sante-front:latest                                              edab716a33f0        342MB          134MB   U    

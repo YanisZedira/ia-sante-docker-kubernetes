@@ -1,0 +1,44 @@
+20:25:30
+back-hpa   Deployment/back-deployment   cpu: 43%/60%   2     6     2     11m
+20:25:40
+back-hpa   Deployment/back-deployment   cpu: 60%/60%   2     6     2     11m
+20:25:51
+back-hpa   Deployment/back-deployment   cpu: 60%/60%   2     6     2     11m
+20:26:01
+back-hpa   Deployment/back-deployment   cpu: 11%/60%   2     6     2     11m
+20:26:14
+back-hpa   Deployment/back-deployment   cpu: 50%/60%   2     6     2     11m
+20:26:25
+back-hpa   Deployment/back-deployment   cpu: 218%/60%   2     6     2     12m
+20:26:37
+back-hpa   Deployment/back-deployment   cpu: 218%/60%   2     6     2     12m
+20:26:48
+back-hpa   Deployment/back-deployment   cpu: 254%/60%   2     6     4     12m
+20:26:58
+back-hpa   Deployment/back-deployment   cpu: 246%/60%   2     6     6     12m
+20:27:09
+back-hpa   Deployment/back-deployment   cpu: 246%/60%   2     6     6     12m
+20:27:19
+back-hpa   Deployment/back-deployment   cpu: 229%/60%   2     6     6     12m
+20:27:30
+back-hpa   Deployment/back-deployment   cpu: 142%/60%   2     6     6     13m
+20:27:40
+back-hpa   Deployment/back-deployment   cpu: 142%/60%   2     6     6     13m
+20:27:51
+back-hpa   Deployment/back-deployment   cpu: 190%/60%   2     6     6     13m
+20:28:01
+back-hpa   Deployment/back-deployment   cpu: 155%/60%   2     6     6     13m
+20:28:13
+back-hpa   Deployment/back-deployment   cpu: 155%/60%   2     6     6     13m
+20:28:23
+back-hpa   Deployment/back-deployment   cpu: 149%/60%   2     6     6     13m
+20:28:33
+back-hpa   Deployment/back-deployment   cpu: 118%/60%   2     6     6     14m
+20:28:44
+back-hpa   Deployment/back-deployment   cpu: 92%/60%   2     6     6     14m
+20:28:55
+back-hpa   Deployment/back-deployment   cpu: 92%/60%   2     6     6     14m
+20:29:05
+back-hpa   Deployment/back-deployment   cpu: 34%/60%   2     6     6     14m
+20:29:16
+back-hpa   Deployment/back-deployment   cpu: 9%/60%   2     6     6     14m
